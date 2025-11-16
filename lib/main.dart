@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'dart:convert';
+import 'package:uuid/uuid.dart';
+import 'models/notification_model.dart';
+import 'services/notification_service.dart';
+import 'screens/notification_history_screen.dart'; // Importa la nueva pantalla
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +21,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   static const String _oneSignalAppId = 'abe3d400-0f44-4745-bd4c-6b609716662a';
+  final NotificationService _notificationService = NotificationService();
 
   @override
   void initState() {
@@ -27,6 +33,28 @@ class _MyAppState extends State<MyApp> {
     OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
     OneSignal.initialize(_oneSignalAppId);
     OneSignal.Notifications.requestPermission(true);
+
+    OneSignal.Notifications.addForegroundWillDisplayListener((event) {
+      final notification = event.notification;
+      _handleReceivedNotification(
+        notification.notificationId,
+        notification.title ?? 'Sin Título',
+        notification.body ?? 'Sin Cuerpo',
+      );
+      event.preventDefault();
+      notification.display();
+    });
+  }
+
+  void _handleReceivedNotification(String id, String title, String body) {
+    const uuid = Uuid();
+    final notification = NotificationModel(
+      id: uuid.v4(), // Genera un ID único
+      title: title,
+      body: body,
+      receivedDate: DateTime.now(),
+    );
+    _notificationService.saveNotification(notification);
   }
 
   @override
@@ -54,6 +82,11 @@ class NotificationInfoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Receptor de Notificaciones'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -89,7 +122,7 @@ class NotificationInfoScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Esta aplicación está lista para recibir notificaciones importantes. No es necesario realizar ninguna otra acción. ¡Gracias por instalarla!',
+                  'Esta aplicación está lista para recibir notificaciones importantes. Consulta el historial para ver las notificaciones pasadas.',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     fontSize: 16,
@@ -100,6 +133,17 @@ class NotificationInfoScreen extends StatelessWidget {
             ),
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const NotificationHistoryScreen()),
+          );
+        },
+        backgroundColor: Colors.purple.shade400,
+        child: const Icon(Icons.history, color: Colors.white),
+        tooltip: 'Ver Historial',
       ),
     );
   }
