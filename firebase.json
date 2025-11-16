@@ -1,0 +1,28 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "huellitas-by-ubican-id",
+          "appId": "1:792221374357:android:0e45fd0348969b39ce489c",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "huellitas-by-ubican-id",
+          "configurations": {
+            "android": "1:792221374357:android:0e45fd0348969b39ce489c",
+            "web": "1:792221374357:web:e99b5743432b8e18ce489c"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "nam5",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}

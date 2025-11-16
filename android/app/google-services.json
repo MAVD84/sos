@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "792221374357",
+    "project_id": "huellitas-by-ubican-id",
+    "storage_bucket": "huellitas-by-ubican-id.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792221374357:android:b2db94fe9aee5849ce489c",
+        "android_client_info": {
+          "package_name": "com.huellitas.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3r4ZTrsJ0IkUD8iQScGaTahJTxu3TJEQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792221374357:android:0e45fd0348969b39ce489c",
+        "android_client_info": {
+          "package_name": "com.sos.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3r4ZTrsJ0IkUD8iQScGaTahJTxu3TJEQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
