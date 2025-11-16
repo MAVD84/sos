@@ -33,26 +33,37 @@ class _MyAppState extends State<MyApp> {
     OneSignal.initialize(_oneSignalAppId);
     OneSignal.Notifications.requestPermission(true);
 
+    // Para notificaciones en primer plano
     OneSignal.Notifications.addForegroundWillDisplayListener((event) {
       final notification = event.notification;
       _handleReceivedNotification(
         notification.title ?? 'Sin Título',
         notification.body ?? 'Sin Cuerpo',
-        notification.launchUrl, // Capturamos la URL aquí
+        notification.launchUrl,
       );
       event.preventDefault();
       notification.display();
+    });
+
+    // Para notificaciones en segundo plano o cerradas
+    OneSignal.Notifications.addClickListener((event) {
+      final notification = event.notification;
+      _handleReceivedNotification(
+        notification.title ?? 'Sin Título',
+        notification.body ?? 'Sin Cuerpo',
+        notification.launchUrl,
+      );
     });
   }
 
   void _handleReceivedNotification(String title, String body, String? url) {
     const uuid = Uuid();
     final notification = NotificationModel(
-      id: uuid.v4(), // Genera un ID único
+      id: uuid.v4(),
       title: title,
       body: body,
       receivedDate: DateTime.now(),
-      url: url, // Guardamos la URL
+      url: url,
     );
     _notificationService.saveNotification(notification);
   }
