@@ -5,12 +5,14 @@ class NotificationModel {
   final String title;
   final String body;
   final DateTime receivedDate;
+  final String? url; // Campo para la URL
 
   NotificationModel({
     required this.id,
     required this.title,
     required this.body,
     required this.receivedDate,
+    this.url,
   });
 
   Map<String, dynamic> toMap() {
@@ -19,6 +21,7 @@ class NotificationModel {
       'title': title,
       'body': body,
       'receivedDate': receivedDate.toIso8601String(),
+      'url': url,
     };
   }
 
@@ -28,6 +31,7 @@ class NotificationModel {
       title: map['title'] ?? '',
       body: map['body'] ?? '',
       receivedDate: DateTime.parse(map['receivedDate']),
+      url: map['url'],
     );
   }
 

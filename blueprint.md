@@ -2,7 +2,7 @@
 
 ## Descripción General
 
-Esta aplicación de Flutter tiene como propósito principal recibir y gestionar notificaciones push enviadas a través de OneSignal. Permite a los usuarios ver las notificaciones entrantes y consultar un historial de las notificaciones recibidas anteriormente, con la opción de gestionarlas.
+Esta aplicación de Flutter tiene como propósito principal recibir y gestionar notificaciones push enviadas a través de OneSignal. Permite a los usuarios ver las notificaciones entrantes y consultar un historial de las notificaciones recibidas anteriormente, con la opción de gestionarlas e interactuar con ellas.
 
 ## Características Implementadas
 
@@ -16,17 +16,20 @@ Esta aplicación de Flutter tiene como propósito principal recibir y gestionar 
     *   **Eliminar Notificaciones:** Los usuarios pueden eliminar notificaciones individualmente desde el historial.
     *   **Borrar Todo el Historial:** Un botón permite a los usuarios eliminar todas las notificaciones almacenadas de una sola vez, con un diálogo de confirmación.
 *   **Navegación Intuitiva:** Un `FloatingActionButton` en la pantalla principal permite un acceso fácil y rápido a la pantalla del historial.
+*   **Abrir Enlaces desde el Historial:**
+    *   **Captura de URL:** La aplicación ahora captura la URL (`launchUrl`) que puede venir en una notificación de OneSignal.
+    *   **Interacción en el Historial:** Las notificaciones que contienen una URL se pueden tocar. Al hacerlo, se abre el enlace en el navegador externo del dispositivo.
+    *   **Indicador Visual:** Un icono de enlace distingue claramente las notificaciones interactivas de las que son solo informativas.
 
 ## Plan de Implementación Actual
 
 **Estado:** ¡Completado!
 
-**Última Funcionalidad Añadida: Historial de Notificaciones**
+**Última Funcionalidad Añadida: Abrir Enlaces desde Notificaciones**
 
-1.  **Añadir Dependencias:** Se agregó `shared_preferences` para el almacenamiento local y `uuid` para generar identificadores únicos.
-2.  **Crear Modelo de Datos:** Se definió la clase `NotificationModel` para estructurar los datos de cada notificación.
-3.  **Implementar Servicio de Notificaciones:** Se creó `NotificationService` para manejar la lógica de guardar, cargar y eliminar notificaciones.
-4.  **Integrar con OneSignal:** Se actualizó `main.dart` para que las notificaciones entrantes se guarden automáticamente a través del `NotificationService`.
-5.  **Diseñar Pantalla de Historial:** Se creó `NotificationHistoryScreen` para visualizar y gestionar el historial de notificaciones.
-6.  **Añadir Navegación:** Se integró un botón flotante en la pantalla principal para navegar al historial.
-7.  **Actualizar el Blueprint:** Se ha documentado la nueva funcionalidad en este archivo.
+1.  **Añadir Dependencia:** Se agregó `url_launcher` para manejar la apertura de URLs.
+2.  **Actualizar Modelo:** Se modificó `NotificationModel` para incluir un campo opcional para la URL.
+3.  **Capturar URL:** Se actualizó la lógica en `main.dart` para extraer y guardar la `launchUrl` al recibir una notificación.
+4.  **Implementar Apertura de URL:** En `NotificationHistoryScreen`, se añadió la lógica para que al tocar una notificación, se abra la URL asociada usando `url_launcher`.
+5.  **Añadir Indicador Visual:** Se agregó un icono para diferenciar las notificaciones con enlaces.
+6.  **Actualizar el Blueprint:** Se ha documentado la nueva funcionalidad en este archivo.

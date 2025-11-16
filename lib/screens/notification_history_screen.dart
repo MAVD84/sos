@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/notification_model.dart';
 import '../services/notification_service.dart';
 
@@ -24,18 +25,33 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
   Future<void> _loadNotifications() async {
     final notifications = await _notificationService.loadNotifications();
     setState(() {
-      _notifications = notifications.reversed.toList(); // Mostrar la más reciente primero
+      _notifications = notifications.reversed.toList();
     });
   }
 
   Future<void> _deleteNotification(String id) async {
     await _notificationService.deleteNotification(id);
-    _loadNotifications(); // Recargar la lista
+    _loadNotifications();
   }
 
   Future<void> _clearAllNotifications() async {
     await _notificationService.clearAllNotifications();
-    _loadNotifications(); // Recargar la lista
+    _loadNotifications();
+  }
+
+  Future<void> _launchURL(String? urlString) async {
+    if (urlString == null || urlString.isEmpty) return;
+
+    final Uri uri = Uri.parse(urlString);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No se pudo abrir el enlace: $urlString')),
+        );
+      }
+    }
   }
 
   @override
@@ -47,7 +63,7 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_sweep),
-            onPressed: () => _showClearAllConfirmationDialog(),
+            onPressed: _showClearAllConfirmationDialog,
             tooltip: 'Borrar todo el historial',
           ),
         ],
@@ -57,10 +73,7 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Colors.deepPurple.shade800,
-              Colors.purple.shade800,
-            ],
+            colors: [Colors.deepPurple.shade800, Colors.purple.shade800],
           ),
         ),
         child: _notifications.isEmpty
@@ -81,10 +94,15 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                 itemCount: _notifications.length,
                 itemBuilder: (context, index) {
                   final notification = _notifications[index];
+                  final hasUrl = notification.url != null && notification.url!.isNotEmpty;
                   return Card(
                     margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     color: Colors.black.withOpacity(0.2),
                     child: ListTile(
+                      leading: Icon(
+                        hasUrl ? Icons.link : Icons.notifications,
+                        color: hasUrl ? Colors.lightBlueAccent : Colors.white70,
+                      ),
                       title: Text(
                         notification.title,
                         style: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: Colors.white),
@@ -97,6 +115,7 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                         icon: const Icon(Icons.delete, color: Colors.redAccent),
                         onPressed: () => _deleteNotification(notification.id),
                       ),
+                      onTap: () => _launchURL(notification.url),
                     ),
                   );
                 },
@@ -119,9 +138,7 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
           actions: <Widget>[
             TextButton(
               child: Text('Cancelar', style: GoogleFonts.poppins(color: Colors.white70)),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
               child: Text('Borrar Todo', style: GoogleFonts.poppins(color: Colors.redAccent)),

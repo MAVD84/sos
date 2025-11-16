@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
-import 'dart:convert';
 import 'package:uuid/uuid.dart';
 import 'models/notification_model.dart';
 import 'services/notification_service.dart';
-import 'screens/notification_history_screen.dart'; // Importa la nueva pantalla
+import 'screens/notification_history_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,22 +36,23 @@ class _MyAppState extends State<MyApp> {
     OneSignal.Notifications.addForegroundWillDisplayListener((event) {
       final notification = event.notification;
       _handleReceivedNotification(
-        notification.notificationId,
         notification.title ?? 'Sin Título',
         notification.body ?? 'Sin Cuerpo',
+        notification.launchUrl, // Capturamos la URL aquí
       );
       event.preventDefault();
       notification.display();
     });
   }
 
-  void _handleReceivedNotification(String id, String title, String body) {
+  void _handleReceivedNotification(String title, String body, String? url) {
     const uuid = Uuid();
     final notification = NotificationModel(
       id: uuid.v4(), // Genera un ID único
       title: title,
       body: body,
       receivedDate: DateTime.now(),
+      url: url, // Guardamos la URL
     );
     _notificationService.saveNotification(notification);
   }
